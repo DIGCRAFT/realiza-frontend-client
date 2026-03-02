@@ -310,7 +310,7 @@ export default function OrcamentoInterativo() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async () => {
     if (!selectedColor) {
       toast.error("Por favor, selecione uma cor");
       return;

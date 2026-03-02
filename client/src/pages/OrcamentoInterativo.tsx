@@ -86,6 +86,7 @@ const productConfigs: Record<string, ProductLineConfig> = {
       { id: "7", name: "Branco", hexCode: "#FFFFFF", category: "solid" },
       { id: "8", name: "Preto", hexCode: "#1A1A1A", category: "solid" },
       { id: "9", name: "Alumínio", hexCode: "#C0C0C0", category: "solid" },
+      { id: "10", name: "Aço Cortêm", hexCode: "#C0C0C0", category: "solid" },
     ],
   },
   gold: {

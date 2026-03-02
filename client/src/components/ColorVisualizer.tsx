@@ -155,17 +155,6 @@ export default function ColorVisualizer({
             )}
           </div>
 
-          {/* Informações da Cor (Canto Inferior Direito) */}
-          {selectedColor && (
-            <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg border border-gray-700">
-              <p className="text-xs font-bold text-gray-300 mb-1">ACABAMENTO</p>
-              <p className="text-sm font-semibold text-white">
-                {selectedColor.name}
-              </p>
-              <p className="text-xs text-gray-400">{selectedColor.hexCode}</p>
-            </div>
-          )}
-
           {/* Ícone de Expansão */}
           {selectedColor && (
             <button
@@ -254,17 +243,6 @@ export default function ColorVisualizer({
               {/* Ripas Verticais */}
               <div className="flex h-full w-full gap-0.5 p-8 bg-black">
                 {generateRipas()}
-              </div>
-
-              {/* Informações da Cor */}
-              <div className="absolute bottom-6 right-6 bg-black/90 backdrop-blur-sm px-4 py-3 rounded-lg shadow-2xl border border-gray-600">
-                <p className="text-xs font-bold text-gray-300 mb-1">
-                  ACABAMENTO
-                </p>
-                <p className="text-lg font-semibold text-white">
-                  {selectedColor.name}
-                </p>
-                <p className="text-sm text-gray-400">{selectedColor.hexCode}</p>
               </div>
             </div>
           </div>

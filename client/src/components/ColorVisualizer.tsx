@@ -6,7 +6,10 @@ interface ColorVisualizerProps {
   productLine: string;
 }
 
-export default function ColorVisualizer({ selectedColor, productLine }: ColorVisualizerProps) {
+export default function ColorVisualizer({
+  selectedColor,
+  productLine,
+}: ColorVisualizerProps) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExpandedModalOpen, setIsExpandedModalOpen] = useState(false);
 
@@ -22,7 +25,9 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
       : { r: 0, g: 0, b: 0 };
   };
 
-  const colorRgb = selectedColor?.hexCode ? hexToRgb(selectedColor.hexCode as string) : { r: 128, g: 128, b: 128 };
+  const colorRgb = selectedColor?.hexCode
+    ? hexToRgb(selectedColor.hexCode as string)
+    : { r: 128, g: 128, b: 128 };
 
   // Gerar ripas com variação de brilho usando textura da imagem
   const generateRipas = () => {
@@ -57,7 +62,12 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-bold text-lg text-primary flex items-center gap-2">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -85,8 +95,18 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
                 onClick={() => setIsShareModalOpen(false)}
                 className="bg-neutral-100 p-2 rounded-full hover:bg-neutral-200 transition-colors"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -116,7 +136,12 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
             ) : (
               <div className="flex-1 flex items-center justify-center text-gray-500">
                 <div className="text-center">
-                  <svg className="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-12 h-12 mx-auto mb-2 opacity-50"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -134,7 +159,9 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
           {selectedColor && (
             <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg border border-gray-700">
               <p className="text-xs font-bold text-gray-300 mb-1">ACABAMENTO</p>
-              <p className="text-sm font-semibold text-white">{selectedColor.name}</p>
+              <p className="text-sm font-semibold text-white">
+                {selectedColor.name}
+              </p>
               <p className="text-xs text-gray-400">{selectedColor.hexCode}</p>
             </div>
           )}
@@ -146,7 +173,12 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
               className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 p-2 rounded-lg transition-colors"
               title="Expandir visualização"
             >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -168,7 +200,8 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
       </div>
 
       <p className="text-xs text-muted-foreground mt-3 text-center">
-        * Visualização em ripas de alumínio. As cores podem variar conforme iluminação, acabamento e material aplicado.
+        * Visualização em ripas de alumínio. As cores podem variar conforme
+        iluminação, acabamento e material aplicado.
       </p>
 
       {selectedColor && (
@@ -196,23 +229,39 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
               className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors z-10"
               title="Fechar"
             >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
 
             {/* Visualizador Expandido */}
             <div
               className="relative w-full aspect-video bg-gradient-to-b from-gray-900 to-black rounded-lg overflow-hidden border border-gray-700"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
               {/* Ripas Verticais */}
-              <div className="flex h-full w-full gap-0.5 p-8 bg-black">{generateRipas()}</div>
+              <div className="flex h-full w-full gap-0.5 p-8 bg-black">
+                {generateRipas()}
+              </div>
 
               {/* Informações da Cor */}
               <div className="absolute bottom-6 right-6 bg-black/90 backdrop-blur-sm px-4 py-3 rounded-lg shadow-2xl border border-gray-600">
-                <p className="text-xs font-bold text-gray-300 mb-1">ACABAMENTO</p>
-                <p className="text-lg font-semibold text-white">{selectedColor.name}</p>
+                <p className="text-xs font-bold text-gray-300 mb-1">
+                  ACABAMENTO
+                </p>
+                <p className="text-lg font-semibold text-white">
+                  {selectedColor.name}
+                </p>
                 <p className="text-sm text-gray-400">{selectedColor.hexCode}</p>
               </div>
             </div>

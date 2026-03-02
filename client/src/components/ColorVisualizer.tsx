@@ -8,9 +8,7 @@ interface ColorVisualizerProps {
 
 export default function ColorVisualizer({
   selectedColor,
-  productLine,
 }: ColorVisualizerProps) {
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExpandedModalOpen, setIsExpandedModalOpen] = useState(false);
 
   // Calcular cor RGB a partir do hex
@@ -60,6 +58,7 @@ export default function ColorVisualizer({
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+      {/* Título/Cabeçalho do card */}
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-bold text-lg text-primary flex items-center gap-2">
           <svg
@@ -84,47 +83,6 @@ export default function ColorVisualizer({
           Visualize Sua Escolha
         </h4>
       </div>
-
-      {/* Modal de Compartilhamento */}
-      {isShareModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-lg">Visualizar no Telemóvel</h3>
-              <button
-                onClick={() => setIsShareModalOpen(false)}
-                className="bg-neutral-100 p-2 rounded-full hover:bg-neutral-200 transition-colors"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            {/* Informações da Cor */}
-            {selectedColor && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-600 mb-2">
-                  <strong>Seleção Atual:</strong>
-                </p>
-                <p className="text-sm text-gray-800">
-                  {productLine} - {selectedColor.name}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Visualizador de Ripas + Referência */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-4">
@@ -190,11 +148,13 @@ export default function ColorVisualizer({
         ) : null}
       </div>
 
+      {/* Legenda sobre a visualização */}
       <p className="text-xs text-muted-foreground mt-3 text-center">
         * Visualização em ripas de alumínio. As cores podem variar conforme
         iluminação, acabamento e material aplicado.
       </p>
 
+      {/* Card de dica */}
       {selectedColor && (
         <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-800">

@@ -47,12 +47,14 @@ export default function ColorSimulator({
         {showWoodColors && (
           <div className="flex gap-2 mb-8 p-1 bg-gray-50 rounded-xl w-fit">
             <button 
+              type="button"
               onClick={() => setColorType('solid')}
               className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${colorType === 'solid' ? 'bg-white shadow-sm text-black' : 'text-gray-400 hover:text-gray-600'}`}
             >
               Cores Sólidas
             </button>
             <button 
+              type="button"
               onClick={() => setColorType('wood')}
               className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${colorType === 'wood' ? 'bg-white shadow-sm text-black' : 'text-gray-400 hover:text-gray-600'}`}
             >
@@ -65,6 +67,7 @@ export default function ColorSimulator({
           {filteredColors.map((color) => (
             <button
               key={color.id}
+              type="button"
               onClick={() => handleColorSelect(color.id)}
               className="group flex flex-col items-center gap-2"
             >

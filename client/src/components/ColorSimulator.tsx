@@ -115,14 +115,14 @@ export default function ColorSimulator({
           {/* Imagem de Ambiente */}
           <div className="md:col-span-2 relative aspect-video rounded-2xl overflow-hidden group bg-gray-100">
             <img 
-              src={`/images/finishes/${selectedColorId}.png`}
-              alt="Preview Ambiente"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://picsum.photos/seed/finish-${selectedColorId}/800/450`;
-              }}
-            />
+             src={`/images/profiles/${selectedColorId}.png`}
+             alt="Perfil Técnico"
+             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+             onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = `https://picsum.photos/seed/profile-${selectedColorId}/400/400`;
+           }}
+          />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-6 left-6 text-white">
               <p className="text-[10px] uppercase tracking-widest font-bold opacity-70 mb-1">Ambiente</p>

@@ -21,11 +21,11 @@ const WOOD_COLORS: Color[] = [
   { id: "rosewood", name: "Pau-Rosa", hexCode: "#65000b", category: "wood" as const },
 ];
 
-// Cores Sólidas
+// Cores Sólidas (Atualizadas para .png e Aço Corten)
 const SOLID_COLORS: Color[] = [
-  { id: "white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.jpg", category: "solid" as const },
-  { id: "black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto-fosco.jpg", category: "solid" as const },
-  { id: "aluminum", name: "Alumínio", hexCode: "#a8a9ad", image: "/images/colors/aluminio.jpg", category: "solid" as const },
+  { id: "white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.png", category: "solid" as const },
+  { id: "black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto.png", category: "solid" as const },
+  { id: "corten", name: "Aço Corten", hexCode: "#844d36", image: "/images/colors/aco-corten.png", category: "solid" as const },
 ];
 
 // Configuração das linhas de produtos
@@ -63,12 +63,14 @@ export const PRODUCT_LINES: Record<string, ProductLineConfig> = {
     displayName: "Painéis ACM",
     description: "Revestimento em alumínio composto de alta performance",
     colors: [
-      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", category: "solid" as const },
-      { id: "acm-white", name: "Branco", hexCode: "#ffffff", category: "solid" as const },
+      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto.png", category: "solid" as const },
+      { id: "acm-white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.png", category: "solid" as const },
+      { id: "acm-corten", name: "Aço Corten", hexCode: "#844d36", image: "/images/colors/aco-corten.png", category: "solid" as const },
     ],
     solidColors: [
-      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", category: "solid" as const },
-      { id: "acm-white", name: "Branco", hexCode: "#ffffff", category: "solid" as const },
+      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto.png", category: "solid" as const },
+      { id: "acm-white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.png", category: "solid" as const },
+      { id: "acm-corten", name: "Aço Corten", hexCode: "#844d36", image: "/images/colors/aco-corten.png", category: "solid" as const },
     ],
     hasBonus: false,
   },

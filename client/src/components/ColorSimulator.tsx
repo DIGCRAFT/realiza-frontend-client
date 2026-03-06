@@ -2,7 +2,10 @@
 
 import React, { useState } from 'react';
 import { Check, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
 import { WOOD_COLORS, SOLID_COLORS } from '@/lib/colors';
+import { Color } from '@/types/products';
 
 interface ColorSimulatorProps {
   showWoodColors?: boolean;
@@ -27,6 +30,7 @@ export default function ColorSimulator({
     }
   };
 
+  // Filtra as cores com base na categoria
   const filteredColors = (colorType === 'solid' ? SOLID_COLORS : WOOD_COLORS).filter(c => {
     if (!showWoodColors && c.category === 'wood') return false;
     return true;
@@ -36,6 +40,7 @@ export default function ColorSimulator({
 
   return (
     <div className="space-y-8">
+      {/* 1. Seletor de Cores */}
       <section className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold">1</div>
@@ -70,9 +75,14 @@ export default function ColorSimulator({
                 selectedColorId === color.id ? 'border-emerald-500 scale-110' : 'border-transparent group-hover:border-gray-100'
               }`}>
                 <div 
-                  className={`w-full h-full rounded-full border ${color.id === 'white' ? 'border-gray-200' : 'border-transparent'}`}
-                  style={{ backgroundColor: color.hexCode }}
-                />
+                  className={`w-full h-full rounded-full border overflow-hidden ${color.id === 'white' ? 'border-gray-200' : 'border-transparent'}`}
+                >
+                  {color.image ? (
+                    <img src={color.image} alt={color.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full" style={{ backgroundColor: color.hexCode }} />
+                  )}
+                </div>
                 {selectedColorId === color.id && (
                   <div className="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full p-0.5">
                     <Check size={10} strokeWidth={4} />
@@ -88,9 +98,14 @@ export default function ColorSimulator({
 
         <div className="bg-gray-50 rounded-2xl p-6 flex items-center gap-6">
           <div 
-            className="w-16 h-16 rounded-full shadow-inner border border-black/5"
-            style={{ backgroundColor: currentColor.hexCode }}
-          />
+            className="w-16 h-16 rounded-full shadow-inner border border-black/5 overflow-hidden"
+          >
+            {currentColor.image ? (
+              <img src={currentColor.image} alt={currentColor.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full" style={{ backgroundColor: currentColor.hexCode }} />
+            )}
+          </div>
           <div>
             <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Acabamento Selecionado</p>
             <h4 className="font-bold text-xl">{currentColor.name}</h4>
@@ -99,13 +114,17 @@ export default function ColorSimulator({
         </div>
       </section>
 
+      {/* 2. Visualização */}
       <section className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
         <div className="flex items-center gap-2 mb-6 text-gray-400">
-          <Info size={18} />
-          <h2 className="text-lg font-bold">Visualização em Tempo Real</h2>
+          <div className="flex items-center gap-2">
+            <Info size={18} />
+            <h2 className="text-lg font-bold">Visualização em Tempo Real</h2>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
+          {/* Imagem de Ambiente */}
           <div className="md:col-span-2 relative aspect-video rounded-2xl overflow-hidden group bg-gray-100">
             <img 
               src={`/images/finishes/${selectedColorId}.png`}
@@ -123,6 +142,7 @@ export default function ColorSimulator({
             </div>
           </div>
 
+          {/* Perfil Técnico */}
           <div className="relative aspect-square md:aspect-auto rounded-2xl overflow-hidden border border-gray-100 bg-white group">
             <img 
               src={`/images/profiles/${selectedColorId}.png`}

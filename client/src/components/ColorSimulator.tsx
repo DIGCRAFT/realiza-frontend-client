@@ -2,19 +2,19 @@
 
 import React, { useState } from 'react';
 import { Check, Info } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-import { colors as GLOBAL_COLORS } from '@/lib/colors';
+import { WOOD_COLORS, SOLID_COLORS } from '@/lib/colors';
 
 interface ColorSimulatorProps {
-  showWoodColors?: boolean; // Se falso, mostra apenas sólidos
+  showWoodColors?: boolean;
   defaultColorId?: string;
   onColorChange?: (colorId: string) => void;
 }
 
+const ALL_COLORS = [...SOLID_COLORS, ...WOOD_COLORS];
+
 export default function ColorSimulator({ 
   showWoodColors = true, 
-  defaultColorId = 'preto',
+  defaultColorId = 'black',
   onColorChange
 }: ColorSimulatorProps) {
   const [selectedColorId, setSelectedColorId] = useState(defaultColorId);
@@ -27,17 +27,15 @@ export default function ColorSimulator({
     }
   };
 
-  // Filtra as cores com base na configuração
-  const filteredColors = GLOBAL_COLORS.filter(c => {
-    if (!showWoodColors && c.type === 'wood') return false;
-    return c.type === colorType;
+  const filteredColors = (colorType === 'solid' ? SOLID_COLORS : WOOD_COLORS).filter(c => {
+    if (!showWoodColors && c.category === 'wood') return false;
+    return true;
   });
 
-  const currentColor = GLOBAL_COLORS.find(c => c.id === selectedColorId) || GLOBAL_COLORS[0];
+  const currentColor = ALL_COLORS.find(c => c.id === selectedColorId) || ALL_COLORS[0];
 
   return (
     <div className="space-y-8">
-      {/* 1. Seletor de Cores */}
       <section className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold">1</div>
@@ -47,14 +45,12 @@ export default function ColorSimulator({
         {showWoodColors && (
           <div className="flex gap-2 mb-8 p-1 bg-gray-50 rounded-xl w-fit">
             <button 
-              type="button"
               onClick={() => setColorType('solid')}
               className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${colorType === 'solid' ? 'bg-white shadow-sm text-black' : 'text-gray-400 hover:text-gray-600'}`}
             >
               Cores Sólidas
             </button>
             <button 
-              type="button"
               onClick={() => setColorType('wood')}
               className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${colorType === 'wood' ? 'bg-white shadow-sm text-black' : 'text-gray-400 hover:text-gray-600'}`}
             >
@@ -67,7 +63,6 @@ export default function ColorSimulator({
           {filteredColors.map((color) => (
             <button
               key={color.id}
-              type="button"
               onClick={() => handleColorSelect(color.id)}
               className="group flex flex-col items-center gap-2"
             >
@@ -75,8 +70,8 @@ export default function ColorSimulator({
                 selectedColorId === color.id ? 'border-emerald-500 scale-110' : 'border-transparent group-hover:border-gray-100'
               }`}>
                 <div 
-                  className={`w-full h-full rounded-full border ${color.id === 'branco' ? 'border-gray-200' : 'border-transparent'}`}
-                  style={{ backgroundColor: color.hex }}
+                  className={`w-full h-full rounded-full border ${color.id === 'white' ? 'border-gray-200' : 'border-transparent'}`}
+                  style={{ backgroundColor: color.hexCode }}
                 />
                 {selectedColorId === color.id && (
                   <div className="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full p-0.5">
@@ -94,7 +89,7 @@ export default function ColorSimulator({
         <div className="bg-gray-50 rounded-2xl p-6 flex items-center gap-6">
           <div 
             className="w-16 h-16 rounded-full shadow-inner border border-black/5"
-            style={{ backgroundColor: currentColor.hex }}
+            style={{ backgroundColor: currentColor.hexCode }}
           />
           <div>
             <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Acabamento Selecionado</p>
@@ -104,7 +99,6 @@ export default function ColorSimulator({
         </div>
       </section>
 
-      {/* 2. Visualização */}
       <section className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
         <div className="flex items-center gap-2 mb-6 text-gray-400">
           <Info size={18} />
@@ -112,25 +106,23 @@ export default function ColorSimulator({
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Imagem de Ambiente */}
           <div className="md:col-span-2 relative aspect-video rounded-2xl overflow-hidden group bg-gray-100">
             <img 
-             src={`/images/profiles/${selectedColorId}.png`}
-             alt="Perfil Técnico"
-             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-             onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = `https://picsum.photos/seed/profile-${selectedColorId}/400/400`;
-           }}
-          />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              src={`/images/finishes/${selectedColorId}.png`}
+              alt="Preview Ambiente"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = `https://picsum.photos/seed/finish-${selectedColorId}/800/450`;
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 text-white">
               <p className="text-[10px] uppercase tracking-widest font-bold opacity-70 mb-1">Ambiente</p>
               <h3 className="text-2xl font-bold">{currentColor.name}</h3>
             </div>
           </div>
 
-          {/* Perfil Técnico */}
           <div className="relative aspect-square md:aspect-auto rounded-2xl overflow-hidden border border-gray-100 bg-white group">
             <img 
               src={`/images/profiles/${selectedColorId}.png`}

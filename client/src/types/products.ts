@@ -1,32 +1,25 @@
 /**
- * Tipos e interfaces para linhas de produtos
+ * Tipos oficiais para o projeto Realiza Esquadrias
  */
 
-export type ProductLine = string;
-
-export interface WoodColor {
+export interface Color {
   id: string;
   name: string;
-  hexCode?: string;
-  imageName?: string;
-  category: string;
+  hexCode: string; // Obrigatório para o simulador de cores
+  category: 'solid' | 'wood';
 }
 
 export interface ProductLineConfig {
-  id: ProductLine;
-  name: string;
+  id: string;
   displayName: string;
   description: string;
-  colors: WoodColor[];
-  solidColors: WoodColor[];
   hasBonus?: boolean;
-  bonusTitle?: string;
-  bonusDescription?: string;
 }
 
+// Interfaces auxiliares para o formulário de orçamento
 export interface ColorSelection {
-  line: ProductLine;
-  color: WoodColor;
+  line: string;
+  color: Color;
   quantity?: number;
   notes?: string;
 }

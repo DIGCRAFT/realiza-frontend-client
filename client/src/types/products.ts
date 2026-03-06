@@ -5,7 +5,8 @@
 export interface Color {
   id: string;
   name: string;
-  hexCode: string; // Obrigatório para o simulador de cores
+  hexCode?: string; // Opcional se tiver imagem
+  image?: string;   // Caminho da imagem (ex: /images/preto-fosco.jpg)
   category: 'solid' | 'wood';
 }
 

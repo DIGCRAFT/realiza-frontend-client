@@ -5,8 +5,8 @@
 export interface Color {
   id: string;
   name: string;
-  hexCode?: string; // Opcional se tiver imagem
-  image?: string;   // Caminho da imagem (ex: /images/preto-fosco.jpg)
+  hexCode?: string; // Mantém funcionando seus amadeirados
+  image?: string;   // Adiciona suporte para as fotos das cores sólidas
   category: 'solid' | 'wood';
 }
 

@@ -1,33 +1,27 @@
-/**
- * Tipos e interfaces para linhas de produtos
- */
-
-export type ProductLine = string;
-
-export interface WoodColor {
+export interface Color {
   id: string;
   name: string;
-  hexCode?: string;
-  imageName?: string;
-  category: string;
-  slatImage?: string | null;
+  hexCode?: string; // Mantém funcionando seus amadeirados
+  image?: string;   // Adiciona suporte para as fotos das cores sólidas
+  category: 'solid' | 'wood';
 }
 
 export interface ProductLineConfig {
-  id: ProductLine;
+  id: string;
   name: string;
   displayName: string;
   description: string;
-  colors: WoodColor[];
-  solidColors: WoodColor[];
-  hasBonus?: boolean;
+  colors: Color[];
+  solidColors: Color[];
+  hasBonus: boolean;
   bonusTitle?: string;
   bonusDescription?: string;
 }
 
+// Interfaces auxiliares para o formulário de orçamento
 export interface ColorSelection {
-  line: ProductLine;
-  color: WoodColor;
+  line: string;
+  color: Color;
   quantity?: number;
   notes?: string;
 }

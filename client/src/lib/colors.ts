@@ -3,10 +3,10 @@
  * Cores amadeirado e sólidas para cada linha de produto
  */
 
-import { ProductLineConfig } from "@/types/products";
+import { Color, ProductLineConfig } from "@/types/products";
 
 // Cores Amadeirado (baseado em ezycolor.com.br)
-const WOOD_COLORS = [
+const WOOD_COLORS: Color[] = [
   { id: "sand-ash", name: "Sand Ash", hexCode: "#d4c5b0", category: "wood" as const },
   { id: "white-arctic", name: "Branco Ártico", hexCode: "#f5f1ed", category: "wood" as const },
   { id: "light-oak", name: "Carvalho Claro", hexCode: "#d9a574", category: "wood" as const },
@@ -21,11 +21,11 @@ const WOOD_COLORS = [
   { id: "rosewood", name: "Pau-Rosa", hexCode: "#65000b", category: "wood" as const },
 ];
 
-// Cores Sólidas
-const SOLID_COLORS = [
-  { id: "white", name: "Branco", hexCode: "#ffffff", category: "solid" as const },
-  { id: "black", name: "Preto", hexCode: "#1a1a1a", category: "solid" as const },
-  { id: "aluminum", name: "Alumínio", hexCode: "#a8a9ad", category: "solid" as const },
+// Cores Sólidas (Atualizadas para .png e Aço Corten)
+const SOLID_COLORS: Color[] = [
+  { id: "white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.png", category: "solid" as const },
+  { id: "black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto.png", category: "solid" as const },
+  { id: "corten", name: "Aço Corten", hexCode: "#844d36", image: "/images/colors/aco-corten.png", category: "solid" as const },
 ];
 
 // Configuração das linhas de produtos
@@ -63,12 +63,14 @@ export const PRODUCT_LINES: Record<string, ProductLineConfig> = {
     displayName: "Painéis ACM",
     description: "Revestimento em alumínio composto de alta performance",
     colors: [
-      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", category: "solid" as const },
-      { id: "acm-white", name: "Branco", hexCode: "#ffffff", category: "solid" as const },
+      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto.png", category: "solid" as const },
+      { id: "acm-white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.png", category: "solid" as const },
+      { id: "acm-corten", name: "Aço Corten", hexCode: "#844d36", image: "/images/colors/aco-corten.png", category: "solid" as const },
     ],
     solidColors: [
-      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", category: "solid" as const },
-      { id: "acm-white", name: "Branco", hexCode: "#ffffff", category: "solid" as const },
+      { id: "acm-black", name: "Preto", hexCode: "#1a1a1a", image: "/images/colors/preto.png", category: "solid" as const },
+      { id: "acm-white", name: "Branco", hexCode: "#ffffff", image: "/images/colors/branco.png", category: "solid" as const },
+      { id: "acm-corten", name: "Aço Corten", hexCode: "#844d36", image: "/images/colors/aco-corten.png", category: "solid" as const },
     ],
     hasBonus: false,
   },

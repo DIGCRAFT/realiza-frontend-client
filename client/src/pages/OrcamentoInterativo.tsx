@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import ColorSimulator from '@/components/ColorSimulator';
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,7 +16,7 @@ import { ProductLineConfig, WoodColor } from "@/types/products";
 
 const formSchema = z.object({
   name: z.string().min(2, "Nome é obrigatório"),
-  email: z.email({ message: "E-mail inválido" }),
+  email: z.string().email("E-mail inválido"),
   phone: z.string().min(10, "Telefone inválido"),
   cep: z.string().min(8, "CEP inválido"),
   rua: z.string().min(3, "Rua é obrigatória"),
@@ -83,34 +84,9 @@ const productConfigs: Record<string, ProductLineConfig> = {
       },
     ],
     solidColors: [
-      {
-        id: "7",
-        name: "Branco",
-        hexCode: "#FFFFFF",
-        category: "solid",
-        slatImage: "esquadria-cor-branco.png",
-      },
-      {
-        id: "8",
-        name: "Preto",
-        hexCode: "#1A1A1A",
-        category: "solid",
-        slatImage: "esquadria-cor-preta.png",
-      },
-      {
-        id: "9",
-        name: "Alumínio",
-        hexCode: "#C0C0C0",
-        category: "solid",
-        slatImage: "esquadria-cor-aluminio.jpeg",
-      },
-      {
-        id: "10",
-        name: "Aço Cortêm",
-        hexCode: "#C0C0C0",
-        category: "solid",
-        slatImage: "esquadria-cor-aco_cortem.png",
-      },
+      { id: "7", name: "Branco", hexCode: "#FFFFFF", category: "solid" },
+      { id: "8", name: "Preto", hexCode: "#1A1A1A", category: "solid" },
+      { id: "9", name: "Alumínio", hexCode: "#C0C0C0", category: "solid" },
     ],
   },
   gold: {
@@ -196,6 +172,7 @@ export default function OrcamentoInterativo() {
   );
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [location] = useLocation();
   const [, setLocation] = useLocation();
 
   const {
@@ -335,7 +312,7 @@ export default function OrcamentoInterativo() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: FormData) => {
     if (!selectedColor) {
       toast.error("Por favor, selecione uma cor");
       return;
@@ -343,6 +320,15 @@ export default function OrcamentoInterativo() {
 
     setIsSubmitting(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
+
+    const lineInfo = lineColors[selectedLine];
+
+    console.log({
+      ...data,
+      selectedLine,
+      selectedColor,
+      uploadedFiles: uploadedFiles.map(f => f.name),
+    });
 
     toast.success("Solicitação recebida! Entraremos em contato em breve.");
     setIsSubmitting(false);
@@ -395,7 +381,7 @@ export default function OrcamentoInterativo() {
                         setValue("productLine", key);
                       }}
                       disabled={isDisabled}
-                      className={`w-full p-6 rounded-xl border-2 transition-all text-left select-text ${
+                      className={`w-full p-6 rounded-xl border-2 transition-all text-left ${
                         isDisabled
                           ? "border-border bg-gray-100 opacity-60 cursor-not-allowed"
                           : selectedLine === key
@@ -414,7 +400,6 @@ export default function OrcamentoInterativo() {
                       <p className="text-sm text-muted-foreground">
                         {line.description}
                       </p>
-                      {/* Div do Selecionado */}
                       {selectedLine === key && (
                         <div className="mt-4 flex items-center gap-2 text-primary">
                           <Check className="h-5 w-5" />
@@ -433,21 +418,7 @@ export default function OrcamentoInterativo() {
                 2. Escolha a Cor
               </h3>
 
-              <ColorSelector
-                productLine={currentLineConfig}
-                onColorSelect={handleColorSelect}
-                selectedColor={selectedColor}
-              />
-
-              {/* Visualizador de Cores com Imagem de Casa */}
-              {selectedColor && (
-                <div className="mt-8">
-                  <ColorVisualizer
-                    selectedColor={selectedColor}
-                    productLine={currentLine.name}
-                  />
-                </div>
-              )}
+              <ColorSimulator showWoodColors={false} />
 
               {/* Form */}
               <div className="mt-12">

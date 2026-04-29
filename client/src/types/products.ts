@@ -1,3 +1,5 @@
+export type ProductLine = "perfetta" | "gold" | "suprema" | "acm" | "aluminio" | "portas" | "brise";
+
 export interface Color {
   id: string;
   name: string;

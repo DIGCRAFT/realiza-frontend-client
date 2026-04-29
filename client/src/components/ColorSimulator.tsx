@@ -1,45 +1,68 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Check, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { WOOD_COLORS, SOLID_COLORS } from "@/lib/colors";
-import { Color } from "@/types/products";
+import { getColorCategories } from "@/lib/api";
+import { ApiColorCategoryWithColors } from "@/types/api";
 
 interface ColorSimulatorProps {
-  showWoodColors?: boolean;
   defaultColorId?: string;
   onColorChange?: (colorId: string) => void;
 }
 
-const ALL_COLORS = [...SOLID_COLORS, ...WOOD_COLORS];
-
 export default function ColorSimulator({
-  showWoodColors = true,
-  defaultColorId = "black",
+  defaultColorId,
   onColorChange,
 }: ColorSimulatorProps) {
-  const [selectedColorId, setSelectedColorId] = useState(defaultColorId);
-  const [colorType, setColorType] = useState<"solid" | "wood">("solid");
+  const [categories, setCategories] = useState<ApiColorCategoryWithColors[]>(
+    [],
+  );
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [selectedColorId, setSelectedColorId] = useState<string | null>(
+    defaultColorId ?? null,
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getColorCategories().then(data => {
+      const active = data.filter(
+        cat => cat.isActive && cat.colors.length > 0,
+      );
+      setCategories(active);
+      if (active.length > 0) {
+        setActiveCategoryId(active[0].id);
+        if (!selectedColorId && active[0].colors.length > 0) {
+          setSelectedColorId(active[0].colors[0].id);
+        }
+      }
+      setLoading(false);
+    });
+  }, []);
 
   const handleColorSelect = (colorId: string) => {
     setSelectedColorId(colorId);
-    if (onColorChange) {
-      onColorChange(colorId);
-    }
+    onColorChange?.(colorId);
   };
 
-  // Filtra as cores com base na categoria
-  const filteredColors = (
-    colorType === "solid" ? SOLID_COLORS : WOOD_COLORS
-  ).filter(c => {
-    if (!showWoodColors && c.category === "wood") return false;
-    return true;
-  });
-
+  const activeCategory = categories.find(c => c.id === activeCategoryId);
+  const filteredColors = activeCategory?.colors.filter(c => c.isActive) ?? [];
+  const allColors = categories.flatMap(c => c.colors);
   const currentColor =
-    ALL_COLORS.find(c => c.id === selectedColorId) || ALL_COLORS[0];
+    allColors.find(c => c.id === selectedColorId) ?? allColors[0];
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <section className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm flex items-center justify-center min-h-[200px]">
+          <div className="text-gray-400 text-sm">Carregando cores...</div>
+        </section>
+      </div>
+    );
+  }
+
+  if (!currentColor) return null;
 
   return (
     <div className="space-y-8">
@@ -52,22 +75,17 @@ export default function ColorSimulator({
           <h2 className="text-xl font-bold">Personalize o Acabamento</h2>
         </div>
 
-        {showWoodColors && (
-          <div className="flex gap-2 mb-8 p-1 bg-gray-50 rounded-xl w-fit">
+        <div className="flex gap-2 mb-8 p-1 bg-gray-50 rounded-xl w-fit">
+          {categories.map(cat => (
             <button
-              onClick={() => setColorType("solid")}
-              className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${colorType === "solid" ? "bg-white shadow-sm text-black" : "text-gray-400 hover:text-gray-600"}`}
+              key={cat.id}
+              onClick={() => setActiveCategoryId(cat.id)}
+              className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${activeCategoryId === cat.id ? "bg-white shadow-sm text-black" : "text-gray-400 hover:text-gray-600"}`}
             >
-              Cores Sólidas
+              {cat.displayName}
             </button>
-            <button
-              onClick={() => setColorType("wood")}
-              className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${colorType === "wood" ? "bg-white shadow-sm text-black" : "text-gray-400 hover:text-gray-600"}`}
-            >
-              Amadeirados
-            </button>
-          </div>
-        )}
+          ))}
+        </div>
 
         <div className="flex flex-wrap gap-4 mb-8">
           {filteredColors.map(color => (
@@ -84,18 +102,18 @@ export default function ColorSimulator({
                 }`}
               >
                 <div
-                  className={`w-full h-full rounded-full border overflow-hidden ${color.id === "white" ? "border-gray-200" : "border-transparent"}`}
+                  className={`w-full h-full rounded-full border overflow-hidden ${!color.hexCode || color.hexCode === "#FFFFFF" ? "border-gray-200" : "border-transparent"}`}
                 >
-                  {color?.useImage && color?.image ? (
+                  {color.imageSrc ? (
                     <img
-                      src={color.image}
-                      alt={color.name}
+                      src={color.imageSrc}
+                      alt={color.displayName ?? color.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div
                       className="w-full h-full"
-                      style={{ backgroundColor: color.hexCode }}
+                      style={{ backgroundColor: color.hexCode ?? "#ccc" }}
                     />
                   )}
                 </div>
@@ -108,7 +126,7 @@ export default function ColorSimulator({
               <span
                 className={`text-[9px] font-bold tracking-tight text-center w-16 truncate ${selectedColorId === color.id ? "text-black" : "text-gray-400"}`}
               >
-                {color.name.toUpperCase()}
+                {(color.displayName ?? color.name).toUpperCase()}
               </span>
             </button>
           ))}
@@ -116,16 +134,16 @@ export default function ColorSimulator({
 
         <div className="bg-gray-50 rounded-2xl p-6 flex items-center gap-6">
           <div className="w-16 h-16 rounded-full shadow-inner border border-black/5 overflow-hidden">
-            {currentColor?.useImage && currentColor?.image ? (
+            {currentColor.imageSrc ? (
               <img
-                src={currentColor.image}
-                alt={currentColor.name}
+                src={currentColor.imageSrc}
+                alt={currentColor.displayName ?? currentColor.name}
                 className="w-full h-full object-cover"
               />
             ) : (
               <div
                 className="w-full h-full"
-                style={{ backgroundColor: currentColor.hexCode }}
+                style={{ backgroundColor: currentColor.hexCode ?? "#ccc" }}
               />
             )}
           </div>
@@ -133,9 +151,11 @@ export default function ColorSimulator({
             <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">
               Acabamento Selecionado
             </p>
-            <h4 className="font-bold text-xl">{currentColor.name}</h4>
+            <h4 className="font-bold text-xl">
+              {currentColor.displayName ?? currentColor.name}
+            </h4>
             <p className="text-xs text-gray-500">
-              Ref: {selectedColorId.toUpperCase()}
+              Ref: {currentColor.name.toUpperCase()}
             </p>
           </div>
         </div>
@@ -154,12 +174,12 @@ export default function ColorSimulator({
           {/* Imagem de Ambiente */}
           <div className="md:col-span-2 relative aspect-video rounded-2xl overflow-hidden group bg-gray-100">
             <img
-              src={`/images/finishes/${selectedColorId}.png`}
+              src={`/images/finishes/${currentColor.name}.png`}
               alt="Preview Ambiente"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               onError={e => {
                 const target = e.target as HTMLImageElement;
-                target.src = `https://picsum.photos/seed/finish-${selectedColorId}/800/450`;
+                target.src = `https://picsum.photos/seed/finish-${currentColor.name}/800/450`;
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -167,19 +187,21 @@ export default function ColorSimulator({
               <p className="text-[10px] uppercase tracking-widest font-bold opacity-70 mb-1">
                 Ambiente
               </p>
-              <h3 className="text-2xl font-bold">{currentColor.name}</h3>
+              <h3 className="text-2xl font-bold">
+                {currentColor.displayName ?? currentColor.name}
+              </h3>
             </div>
           </div>
 
           {/* Perfil Técnico */}
           <div className="relative aspect-square md:aspect-auto rounded-2xl overflow-hidden border border-gray-100 bg-white group">
             <img
-              src={`/images/profiles/${selectedColorId}.png`}
+              src={`/images/profiles/${currentColor.name}.png`}
               alt="Perfil Técnico"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               onError={e => {
                 const target = e.target as HTMLImageElement;
-                target.src = `https://picsum.photos/seed/profile-${selectedColorId}/400/400`;
+                target.src = `https://picsum.photos/seed/profile-${currentColor.name}/400/400`;
               }}
             />
             <div className="absolute top-3 left-3">

@@ -1,16 +1,18 @@
-import ColorSimulator from '@/components/ColorSimulator';
+import ColorSimulator from "@/components/ColorSimulator";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRight, Check, MapPin, Upload, X } from "lucide-react";
+import { ArrowRight, Check, Loader2, MapPin, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { ProductLineConfig, WoodColor } from "@/types/products";
+import { WoodColor } from "@/types/products";
+import { ApiProductLine, ApiColor } from "@/types/api";
+import { getProductLines, getColors } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(2, "Nome é obrigatório"),
@@ -29,148 +31,36 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-// Configurações das linhas de produtos - ATUALIZADAS
-const productConfigs: Record<string, ProductLineConfig> = {
-  perfetta: {
-    id: "perfetta",
-    name: "Perfetta",
-    displayName: "Linha Perfetta™",
-    description:
-      "Design minimalista invisível, isolamento acústico absoluto e vedação hermética.",
-    colors: [
-      {
-        id: "1",
-        name: "SAND ASH",
-        hexCode: "#5C4033",
-        category: "wood",
-        imageName: "panel_sand-ash.png",
-      },
-      {
-        id: "2",
-        name: "BRANCO DECO",
-        hexCode: "#6B4423",
-        category: "wood",
-        imageName: "panel_branco-deco.png",
-      },
-      {
-        id: "3",
-        name: "CARVALHO ASH",
-        hexCode: "#8B6F47",
-        category: "wood",
-        imageName: "panel_carvalho-ash.png",
-      },
-      {
-        id: "4",
-        name: "CARVALHO ESCURO",
-        hexCode: "#9B7653",
-        category: "wood",
-        imageName: "panel_carvalho-escuro.png",
-      },
-      {
-        id: "5",
-        name: "CARVALHO FIAMMATO",
-        hexCode: "#A0826D",
-        category: "wood",
-        imageName: "panel_carvalho-fiammato.png",
-      },
-      {
-        id: "6",
-        name: "CARVALHO RANOLIT",
-        hexCode: "#B87A5A",
-        category: "wood",
-        imageName: "panel_carvalho-ranolit.png",
-      },
-    ],
-    solidColors: [
-      { id: "7", name: "Branco", hexCode: "#FFFFFF", category: "solid" },
-      { id: "8", name: "Preto", hexCode: "#1A1A1A", category: "solid" },
-      { id: "9", name: "Alumínio", hexCode: "#C0C0C0", category: "solid" },
-    ],
-  },
-  gold: {
-    id: "gold",
-    name: "Gold",
-    displayName: "Linha Gold",
-    description:
-      "Qualidade superior com excelente custo-benefício. Ideal para projetos residenciais e comerciais.",
-    colors: [
-      {
-        id: "10",
-        name: "Carvalho Escuro",
-        hexCode: "#5C4033",
-        category: "wood",
-      },
-      { id: "11", name: "Nogueira", hexCode: "#6B4423", category: "wood" },
-      { id: "12", name: "Teca", hexCode: "#8B6F47", category: "wood" },
-      { id: "13", name: "Jatobá", hexCode: "#9B7653", category: "wood" },
-    ],
-    solidColors: [
-      { id: "14", name: "Branco", hexCode: "#FFFFFF", category: "solid" },
-      { id: "15", name: "Preto", hexCode: "#1A1A1A", category: "solid" },
-      { id: "16", name: "Alumínio", hexCode: "#C0C0C0", category: "solid" },
-    ],
-  },
-  portas: {
-    id: "portas",
-    name: "Portas de Entrada",
-    displayName: "Portas de Entrada",
-    description:
-      "Portas pivotantes e de entrada em alumínio de alto padrão. Imponência e segurança.",
-    colors: [
-      {
-        id: "17",
-        name: "Carvalho Escuro",
-        hexCode: "#5C4033",
-        category: "wood",
-      },
-      { id: "18", name: "Nogueira", hexCode: "#6B4423", category: "wood" },
-      { id: "19", name: "Teca", hexCode: "#8B6F47", category: "wood" },
-      { id: "20", name: "Jatobá", hexCode: "#9B7653", category: "wood" },
-      { id: "21", name: "Ipê", hexCode: "#A0826D", category: "wood" },
-    ],
-    solidColors: [
-      { id: "22", name: "Branco", hexCode: "#FFFFFF", category: "solid" },
-      { id: "23", name: "Preto", hexCode: "#1A1A1A", category: "solid" },
-      { id: "24", name: "Bronze", hexCode: "#8B6914", category: "solid" },
-    ],
-  },
-  brise: {
-    id: "brise",
-    name: "Brise/Painéis",
-    displayName: "Brise/Painéis",
-    description:
-      "Brises e painéis decorativos em alumínio. Estética e funcionalidade para fachadas modernas.",
-    colors: [
-      {
-        id: "25",
-        name: "Carvalho Escuro",
-        hexCode: "#5C4033",
-        category: "wood",
-      },
-      { id: "26", name: "Nogueira", hexCode: "#6B4423", category: "wood" },
-      { id: "27", name: "Teca", hexCode: "#8B6F47", category: "wood" },
-      { id: "28", name: "Ipê", hexCode: "#A0826D", category: "wood" },
-    ],
-    solidColors: [
-      { id: "29", name: "Branco", hexCode: "#FFFFFF", category: "solid" },
-      { id: "30", name: "Preto", hexCode: "#1A1A1A", category: "solid" },
-      { id: "31", name: "Alumínio", hexCode: "#C0C0C0", category: "solid" },
-      { id: "32", name: "Bronze", hexCode: "#8B6914", category: "solid" },
-    ],
-  },
-};
+const SOLIDAS_CATEGORY_NAME = "solidas";
+const AMADEIRADAS_CATEGORY_NAME = "cores_amadeiradas";
+
+function getColorDisplayName(color: ApiColor): string {
+  return color.displayName || color.name;
+}
+
+function isWoodColor(color: ApiColor): boolean {
+  return color.colorCategories.some(
+    (cat) => cat.name === AMADEIRADAS_CATEGORY_NAME,
+  );
+}
+
+function isSolidColor(color: ApiColor): boolean {
+  return color.colorCategories.some(
+    (cat) => cat.name === SOLIDAS_CATEGORY_NAME,
+  );
+}
 
 export default function OrcamentoInterativo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedLine, setSelectedLine] = useState<
-    "perfetta" | "gold" | "portas" | "brise"
-  >("perfetta");
+  const [productLines, setProductLines] = useState<ApiProductLine[]>([]);
+  const [allColors, setAllColors] = useState<ApiColor[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [selectedLineId, setSelectedLineId] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<WoodColor | undefined>(
-    undefined
+    undefined,
   );
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
-  const [location] = useLocation();
   const [, setLocation] = useLocation();
 
   const {
@@ -182,7 +72,7 @@ export default function OrcamentoInterativo() {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      productLine: "perfetta",
+      productLine: "",
       color: "",
       cep: "",
       rua: "",
@@ -194,23 +84,40 @@ export default function OrcamentoInterativo() {
     },
   });
 
-  // Ler parâmetro de URL para pré-selecionar a linha
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const lineParam = searchParams.get("linha");
+    const fetchData = async () => {
+      setIsLoadingData(true);
+      try {
+        const [linesData, colorsData] = await Promise.all([
+          getProductLines(),
+          getColors(),
+        ]);
+        setProductLines(linesData);
+        setAllColors(colorsData);
 
-    if (
-      lineParam &&
-      ["perfetta", "gold", "portas", "brise"].includes(lineParam)
-    ) {
-      setSelectedLine(lineParam as "perfetta" | "gold" | "portas" | "brise");
-      setValue("productLine", lineParam);
-    }
+        const searchParams = new URLSearchParams(window.location.search);
+        const lineParam = searchParams.get("linha");
+        const matchedLine = linesData.find((l) => l.name === lineParam);
+
+        if (matchedLine) {
+          setSelectedLineId(matchedLine.id);
+          setValue("productLine", matchedLine.name);
+        } else if (linesData.length > 0) {
+          setSelectedLineId(linesData[0].id);
+          setValue("productLine", linesData[0].name);
+        }
+      } catch {
+        toast.error("Erro ao carregar dados dos produtos");
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
   }, [setValue]);
 
   const cepValue = watch("cep");
 
-  // Buscar endereço pelo CEP
   useEffect(() => {
     const fetchAddress = async () => {
       const cleanCep = cepValue?.replace(/\D/g, "");
@@ -218,7 +125,7 @@ export default function OrcamentoInterativo() {
         setIsLoadingCep(true);
         try {
           const response = await fetch(
-            `https://viacep.com.br/ws/${cleanCep}/json/`
+            `https://viacep.com.br/ws/${cleanCep}/json/`,
           );
           const data = await response.json();
 
@@ -231,7 +138,7 @@ export default function OrcamentoInterativo() {
           } else {
             toast.error("CEP não encontrado");
           }
-        } catch (error) {
+        } catch {
           toast.error("Erro ao buscar CEP");
         } finally {
           setIsLoadingCep(false);
@@ -243,37 +150,14 @@ export default function OrcamentoInterativo() {
     return () => clearTimeout(timer);
   }, [cepValue, setValue]);
 
-  const lineColors: Record<
-    string,
-    { name: string; description: string; badge: string; badgeColor: string }
-  > = {
-    perfetta: {
-      name: "Linha Perfetta™",
-      description:
-        "Design minimalista invisível, isolamento acústico absoluto e vedação hermética.",
-      badge: "Premium",
-      badgeColor: "bg-primary",
-    },
-    gold: {
-      name: "Linha Gold",
-      description:
-        "Qualidade superior com excelente custo-benefício para projetos residenciais.",
-      badge: "Intermediária",
-      badgeColor: "bg-amber-600",
-    },
-    portas: {
-      name: "Portas de Entrada",
-      description: "Portas pivotantes e de entrada em alumínio de alto padrão.",
-      badge: "Especial",
-      badgeColor: "bg-blue-600",
-    },
-    brise: {
-      name: "Brise/Painéis",
-      description: "Brises e painéis decorativos para fachadas modernas.",
-      badge: "Decorativo",
-      badgeColor: "bg-green-600",
-    },
-  };
+  const selectedLine = productLines.find((l) => l.id === selectedLineId);
+
+  const lineColors = selectedLine?.colors.length
+    ? selectedLine.colors
+    : allColors;
+
+  const woodColors = lineColors.filter(isWoodColor);
+  const solidColors = lineColors.filter(isSolidColor);
 
   const handleColorSelect = (color: WoodColor) => {
     setSelectedColor(color);
@@ -282,7 +166,7 @@ export default function OrcamentoInterativo() {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const validFiles = files.filter(file => {
+    const validFiles = files.filter((file) => {
       const validTypes = [
         "application/pdf",
         "image/jpeg",
@@ -290,7 +174,7 @@ export default function OrcamentoInterativo() {
         "image/jpg",
         "application/zip",
       ];
-      const maxSize = 10 * 1024 * 1024; // 10MB
+      const maxSize = 10 * 1024 * 1024;
 
       if (!validTypes.includes(file.type)) {
         toast.error(`${file.name}: Tipo de arquivo não suportado`);
@@ -303,11 +187,11 @@ export default function OrcamentoInterativo() {
       return true;
     });
 
-    setUploadedFiles(prev => [...prev, ...validFiles]);
+    setUploadedFiles((prev) => [...prev, ...validFiles]);
   };
 
   const removeFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const onSubmit = async (data: FormData) => {
@@ -317,15 +201,13 @@ export default function OrcamentoInterativo() {
     }
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const lineInfo = lineColors[selectedLine];
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     console.log({
       ...data,
-      selectedLine,
+      selectedLine: selectedLine?.name,
       selectedColor,
-      uploadedFiles: uploadedFiles.map(f => f.name),
+      uploadedFiles: uploadedFiles.map((f) => f.name),
     });
 
     toast.success("Solicitação recebida! Entraremos em contato em breve.");
@@ -333,8 +215,18 @@ export default function OrcamentoInterativo() {
     setLocation("/obrigado");
   };
 
-  const currentLine = lineColors[selectedLine];
-  const currentLineConfig = productConfigs[selectedLine];
+  if (isLoadingData) {
+    return (
+      <div className="min-h-screen bg-background font-sans flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-lg text-muted-foreground">
+            Carregando produtos...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -364,49 +256,34 @@ export default function OrcamentoInterativo() {
               </h3>
 
               <div className="space-y-4">
-                {Object.entries(lineColors).map(([key, line]) => {
-                  const isDisabled =
-                    key === "gold" || key === "portas" || key === "brise";
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => {
-                        if (isDisabled) return;
-                        setSelectedLine(
-                          key as "perfetta" | "gold" | "portas" | "brise"
-                        );
-                        setSelectedColor(undefined);
-                        setValue("productLine", key);
-                      }}
-                      disabled={isDisabled}
-                      className={`w-full p-6 rounded-xl border-2 transition-all text-left ${
-                        isDisabled
-                          ? "border-border bg-gray-100 opacity-60 cursor-not-allowed"
-                          : selectedLine === key
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-bold text-lg">{line.name}</h4>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-bold text-white ${line.badgeColor}`}
-                        >
-                          {line.badge}
-                        </span>
+                {productLines.map((line) => (
+                  <button
+                    key={line.id}
+                    onClick={() => {
+                      setSelectedLineId(line.id);
+                      setSelectedColor(undefined);
+                      setValue("productLine", line.name);
+                    }}
+                    className={`w-full p-6 rounded-xl border-2 transition-all text-left ${
+                      selectedLineId === line.id
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-bold text-lg">{line.displayName}</h4>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {line.description}
+                    </p>
+                    {selectedLineId === line.id && (
+                      <div className="mt-4 flex items-center gap-2 text-primary">
+                        <Check className="h-5 w-5" />
+                        <span className="text-sm font-bold">Selecionado</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {line.description}
-                      </p>
-                      {selectedLine === key && (
-                        <div className="mt-4 flex items-center gap-2 text-primary">
-                          <Check className="h-5 w-5" />
-                          <span className="text-sm font-bold">Selecionado</span>
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -416,7 +293,7 @@ export default function OrcamentoInterativo() {
                 2. Escolha a Cor
               </h3>
 
-              <ColorSimulator showWoodColors={true} />
+              <ColorSimulator />
 
               {/* Form */}
               <div className="mt-12">
@@ -649,7 +526,9 @@ export default function OrcamentoInterativo() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Linha:</span>
-                        <span className="font-medium">{currentLine.name}</span>
+                        <span className="font-medium">
+                          {selectedLine?.displayName || "—"}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Cor:</span>

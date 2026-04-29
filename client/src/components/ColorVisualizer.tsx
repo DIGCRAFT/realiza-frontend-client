@@ -1,4 +1,3 @@
-tsx
 import { useState } from "react";
 import { WoodColor } from "@/types/products";
 
@@ -11,13 +10,13 @@ interface ColorVisualizerProps {
 const FINISH_IMAGES: Record<string, string> = {
   "BRANCO": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/finishes/Esqudria%20cor%20Branco%20para%20Site%20Realiza%20gmni.png?raw=true",
   "PRETO": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/finishes/Esqudria%20cor%20Preta%20para%20Site%20Realiza%20gmni.jpeg.png?raw=true",
-  "AÇO CORTEN": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/finishes/Esqudria%20cor%20a%C3%A7o%20cort%C3%8Am%20para%20Site%20Realiza%20gmni.png?raw=true"
+  "ACO_CORTEN": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/finishes/Esqudria%20cor%20a%C3%A7o%20cort%C3%8Am%20para%20Site%20Realiza%20gmni.png?raw=true"
 };
 
 const PROFILE_IMAGES: Record<string, string> = {
   "BRANCO": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/profiles/Branco.png?raw=true",
   "PRETO": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/profiles/Preto.jpg?raw=true",
-  "AÇO CORTEN": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/profiles/A%C3%A7o%20Corten.png?raw=true"
+  "ACO_CORTEN": "https://github.com/DIGCRAFT/realiza-frontend-client/blob/main/client/public/images/profiles/A%C3%A7o%20Corten.png?raw=true"
 };
 
 export default function ColorVisualizer({ selectedColor, productLine }: ColorVisualizerProps) {
@@ -100,16 +99,15 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
         >
           <div className="relative max-w-7xl max-h-[90vh]">
             <img 
-              src={finishUrl} 
+              src={finishUrl}
+              alt="Acabamento"
               className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             />
             <button className="absolute -top-10 right-0 text-white text-3xl font-light hover:opacity-70 transition-opacity">&times;</button>
           </div>
         </div>
-      </div>
-      
-      {/* ... (Modal de Expansão) ... */}
+      )}
     </div>
   );
 }

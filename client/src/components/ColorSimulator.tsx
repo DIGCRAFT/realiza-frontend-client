@@ -169,47 +169,68 @@ export default function ColorSimulator({
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Imagem de Ambiente */}
-          <div className="md:col-span-2 relative aspect-video rounded-2xl overflow-hidden group bg-gray-100">
-            <img
-              src={`/images/finishes/${currentColor.name}.png`}
-              alt="Preview Ambiente"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              onError={e => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://picsum.photos/seed/finish-${currentColor.name}/800/450`;
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-6 text-white">
-              <p className="text-[10px] uppercase tracking-widest font-bold opacity-70 mb-1">
-                Ambiente
-              </p>
-              <h3 className="text-2xl font-bold">
-                {currentColor.displayName ?? currentColor.name}
-              </h3>
-            </div>
-          </div>
+        {(() => {
+          const hasFinish = !!currentColor.imageSrc;
+          const hasProfile = !!currentColor.slatImageSrc;
+          const hasHex = !!currentColor.hexCode;
 
-          {/* Perfil Técnico */}
-          <div className="relative aspect-square md:aspect-auto rounded-2xl overflow-hidden border border-gray-100 bg-white group">
-            <img
-              src={`/images/profiles/${currentColor.name}.png`}
-              alt="Perfil Técnico"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              onError={e => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://picsum.photos/seed/profile-${currentColor.name}/400/400`;
-              }}
-            />
-            <div className="absolute top-3 left-3">
-              <span className="bg-white/90 backdrop-blur-sm text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest text-gray-500 shadow-sm">
-                Perfil Técnico
-              </span>
+          if (!hasFinish && !hasProfile && !hasHex) return null;
+
+          const bothImages = hasFinish && hasProfile;
+
+          return (
+            <div
+              className={`grid gap-6 ${bothImages ? "md:grid-cols-3" : "grid-cols-1"}`}
+            >
+              {/* Imagem de Ambiente */}
+              {(hasFinish || (!hasProfile && hasHex)) && (
+                <div
+                  className={`relative aspect-video rounded-2xl overflow-hidden group bg-gray-100 ${bothImages ? "md:col-span-2" : ""}`}
+                >
+                  {hasFinish ? (
+                    <img
+                      src={currentColor.imageSrc!}
+                      alt="Preview Ambiente"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full"
+                      style={{ backgroundColor: currentColor.hexCode! }}
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-6 left-6 text-white">
+                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-70 mb-1">
+                      Ambiente
+                    </p>
+                    <h3 className="text-2xl font-bold">
+                      {currentColor.displayName ?? currentColor.name}
+                    </h3>
+                  </div>
+                </div>
+              )}
+
+              {/* Perfil Técnico */}
+              {hasProfile && (
+                <div
+                  className={`relative rounded-2xl overflow-hidden border border-gray-100 bg-white group ${bothImages ? "aspect-square md:aspect-auto" : "aspect-video"}`}
+                >
+                  <img
+                    src={currentColor.slatImageSrc!}
+                    alt="Perfil Técnico"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-white/90 backdrop-blur-sm text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest text-gray-500 shadow-sm">
+                      Perfil Técnico
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+          );
+        })()}
       </section>
     </div>
   );

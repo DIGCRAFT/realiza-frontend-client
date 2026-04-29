@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm vite build",
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
   "framework": "vite",

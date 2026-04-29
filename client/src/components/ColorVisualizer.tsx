@@ -107,7 +107,9 @@ export default function ColorVisualizer({ selectedColor, productLine }: ColorVis
             <button className="absolute -top-10 right-0 text-white text-3xl font-light hover:opacity-70 transition-opacity">&times;</button>
           </div>
         </div>
-      )}
+      </div>
+      
+      {/* ... (Modal de Expansão) ... */}
     </div>
   );
 }

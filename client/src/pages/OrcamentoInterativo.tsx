@@ -31,29 +31,10 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const SOLIDAS_CATEGORY_NAME = "solidas";
-const AMADEIRADAS_CATEGORY_NAME = "cores_amadeiradas";
-
-function getColorDisplayName(color: ApiColor): string {
-  return color.displayName || color.name;
-}
-
-function isWoodColor(color: ApiColor): boolean {
-  return color.colorCategories.some(
-    (cat) => cat.name === AMADEIRADAS_CATEGORY_NAME,
-  );
-}
-
-function isSolidColor(color: ApiColor): boolean {
-  return color.colorCategories.some(
-    (cat) => cat.name === SOLIDAS_CATEGORY_NAME,
-  );
-}
-
 export default function OrcamentoInterativo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [productLines, setProductLines] = useState<ApiProductLine[]>([]);
-  const [allColors, setAllColors] = useState<ApiColor[]>([]);
+  const [, setAllColors] = useState<ApiColor[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [selectedLineId, setSelectedLineId] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<WoodColor | undefined>(
@@ -151,19 +132,6 @@ export default function OrcamentoInterativo() {
   }, [cepValue, setValue]);
 
   const selectedLine = productLines.find((l) => l.id === selectedLineId);
-
-  const lineColors = selectedLine?.colors.length
-    ? selectedLine.colors
-    : allColors;
-
-  const woodColors = lineColors.filter(isWoodColor);
-  const solidColors = lineColors.filter(isSolidColor);
-
-  const handleColorSelect = (color: WoodColor) => {
-    setSelectedColor(color);
-    setValue("color", color.name);
-  };
-
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter((file) => {

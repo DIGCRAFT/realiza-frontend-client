@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Check, Info } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 import { getColorCategories } from "@/lib/api";
 import { ApiColorCategoryWithColors } from "@/types/api";
